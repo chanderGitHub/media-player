@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Advanced Media Player</title>
+  <title>Media Player</title>
   <style>
     body {
       margin: 0;
@@ -44,8 +44,13 @@
       text-align: center;
       transition: 0.2s;
     }
-    .card:hover { transform: scale(1.03); }
-    .card h3 { font-size: 1rem; margin-bottom: 10px; }
+    .card:hover {
+      transform: scale(1.03);
+    }
+    .card h3 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
     img.thumbnail {
       width: 100%;
       border-radius: 12px;
@@ -58,37 +63,66 @@
   </style>
 </head>
 <body>
-  <header>Advanced Media Player (Plain JS)</header>
+  <header>Media Player</header>
 
   <input type="text" id="search" placeholder="Search media..." />
 
   <div class="container" id="media-container"></div>
 
   <script>
-    // LOADS FROM media.json
     async function loadMediaList() {
-      const response = await fetch('media/media.json');
-      return await response.json();
+      try {
+        const res = await fetch('media.json');
+        if (!res.ok) throw new Error('media.json not found: ' + res.status);
+        const data = await res.json();
+        return data;
+      } catch (e) {
+        console.error('Error fetching media.json:', e);
+        return [];
+      }
     }
 
     function renderMedia(list) {
       const container = document.getElementById("media-container");
       container.innerHTML = "";
 
+      if (list.length === 0) {
+        container.innerHTML = "<div style='color: #888; text-align: center;'>No media found</div>";
+        return;
+      }
+
       list.forEach(item => {
         const card = document.createElement("div");
         card.className = "card";
 
-        card.innerHTML = `<h3>${item.title}</h3>`;
+        const title = document.createElement("h3");
+        title.textContent = item.title || item.file || item.src;
+        card.appendChild(title);
 
         if (item.thumbnail) {
-          card.innerHTML += `<img class="thumbnail" src="${item.thumbnail}" />`;
+          const img = document.createElement("img");
+          img.className = "thumbnail";
+          img.src = item.thumbnail;
+          card.appendChild(img);
         }
 
-        if (item.type === "audio") {
-          card.innerHTML += `<audio controls src="${item.src}"></audio>`;
-        } else if (item.type === "video") {
-          card.innerHTML += `<video controls poster="${item.thumbnail || ''}" src="${item.src}"></video>`;
+        if ((item.type === "audio" || item.file?.endsWith?.(".mp3")) || item.src?.endsWith?.(".mp3")) {
+          const audio = document.createElement("audio");
+          audio.controls = true;
+          audio.src = item.src || item.file;
+          card.appendChild(audio);
+        } else if ((item.type === "video" || item.file?.endsWith?.(".mp4")) || item.src?.endsWith?.(".mp4")) {
+          const video = document.createElement("video");
+          video.controls = true;
+          video.src = item.src || item.file;
+          if (item.thumbnail) video.poster = item.thumbnail;
+          card.appendChild(video);
+        } else {
+          // fallback: try generic tag
+          const mediaEl = document.createElement("audio");
+          mediaEl.controls = true;
+          mediaEl.src = item.src || item.file;
+          card.appendChild(mediaEl);
         }
 
         container.appendChild(card);
@@ -98,11 +132,17 @@
     document.getElementById("search").addEventListener("input", async function () {
       const value = this.value.toLowerCase();
       const mediaList = await loadMediaList();
-      const filtered = mediaList.filter(m => m.title.toLowerCase().includes(value));
+      const filtered = mediaList.filter(m => {
+        const t = (m.title || m.file || m.src || "").toLowerCase();
+        return t.includes(value);
+      });
       renderMedia(filtered);
     });
 
-    loadMediaList().then(renderMedia);
+    // initial load
+    loadMediaList().then(list => {
+      renderMedia(list);
+    });
   </script>
 </body>
 </html>
