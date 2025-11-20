@@ -1,5 +1,8 @@
 name: Generate media.json
 
+permissions:
+  contents: write
+
 on:
   push:
     paths:
