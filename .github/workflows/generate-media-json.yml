@@ -1,17 +1,13 @@
 name: Generate media.json
 
-permissions:
-  contents: write
-
 on:
   push:
     paths:
       - "media/**"
-      - ".github/workflows/generate-media-json.yml"
   workflow_dispatch:
 
 jobs:
-  build_media_json:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,28 +18,45 @@ jobs:
         run: |
           echo "[" > media.json
           first=true
-          for file in $(ls media); do
-            if [ "$first" = true ]; then
-              first=false
-            else
+          shopt -s nullglob
+          for file in media/*; do
+            filename=$(basename "$file")
+            ext="${filename##*.}"
+
+            # Title = filename without extension (replace - and _ with space)
+            title=$(echo "${filename%.*}" | sed -E 's/[-_]+/ /g')
+
+            # Thumbnails
+            case "$ext" in
+              jpg|jpeg|png|gif|webp)
+                thumbnail="media/$filename"
+                ;;
+              mp4|m4a|mov|webm|avi)
+                thumbnail="https://img.icons8.com/?size=128&id=59833&format=png"
+                ;;
+              mp3|wav|ogg)
+                thumbnail="https://img.icons8.com/?size=128&id=59833&format=png"
+                ;;
+              *)
+                thumbnail="https://img.icons8.com/?size=128&id=59833&format=png"
+                ;;
+            esac
+
+            # Add comma except for the first entry
+            if [ "$first" = false ]; then
               echo "," >> media.json
             fi
-            ext="${file##*.}"
-            if [[ "$ext" == "mp3" || "$ext" == "wav" ]]; then
-              type="audio"
-            elif [[ "$ext" == "mp4" || "$ext" == "webm" ]]; then
-              type="video"
-            else
-              continue
-            fi
-            echo "  {\"file\": \"$file\", \"type\": \"$type\"}" >> media.json
+            first=false
+
+            # Write JSON entry
+            echo "  {\"file\": \"media/$filename\", \"type\": \"$ext\", \"title\": \"$title\", \"thumbnail\": \"$thumbnail\"}" >> media.json
           done
           echo "]" >> media.json
 
-      - name: Commit media.json
+      - name: Commit and push
         run: |
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "GitHub Actions"
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
           git add media.json
           git commit -m "Auto-update media.json" || echo "No changes to commit"
           git push
