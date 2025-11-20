@@ -1,0 +1,53 @@
+body {
+  background: #111;
+  color: #fff;
+  font-family: Arial;
+  text-align: center;
+  padding: 20px;
+}
+
+#search {
+  width: 90%;
+  padding: 10px;
+  margin: 20px 0;
+  border-radius: 10px;
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+.media-card {
+  background: #222;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.media-card:hover {
+  background: #333;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.player {
+  margin-top: 30px;
+  padding: 20px;
+  background: #222;
+  border-radius: 15px;
+  display: none;
+}
+
+.player-thumbnail {
+  width: 200px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
