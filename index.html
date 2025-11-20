@@ -1,158 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Media Player</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #eee;
-    }
-    header {
-      background: #1f1f1f;
-      padding: 20px;
-      text-align: center;
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: #0fbcf9;
-    }
-    #search {
-      width: 90%;
-      margin: 20px auto;
-      display: block;
-      padding: 12px;
-      font-size: 1rem;
-      border-radius: 10px;
-      border: 1px solid #444;
-      background: #222;
-      color: #eee;
-    }
-    .container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
-    .card {
-      background: #1e1e1e;
-      padding: 15px;
-      border-radius: 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      text-align: center;
-      transition: 0.2s;
-    }
-    .card:hover {
-      transform: scale(1.03);
-    }
-    .card h3 {
-      font-size: 1rem;
-      margin-bottom: 10px;
-    }
-    img.thumbnail {
-      width: 100%;
-      border-radius: 12px;
-    }
-    video, audio {
-      width: 100%;
-      margin-top: 10px;
-      border-radius: 8px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Player</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>Media Player</header>
 
-  <input type="text" id="search" placeholder="Search media..." />
+<h1>Media Player</h1>
 
-  <div class="container" id="media-container"></div>
+<input type="text" id="search" placeholder="Search media...">
 
-  <script>
-    async function loadMediaList() {
-      try {
-        const res = await fetch('media.json?v=' + Date.now());  // cache-busting
-        if (!res.ok) {
-          throw new Error('media.json not found or inaccessible: ' + res.status);
-        }
-        const data = await res.json();
-        return data;
-      } catch (e) {
-        console.error('Error fetching media.json:', e);
-        return [];
-      }
-    }
+<div id="media-container" class="media-grid"></div>
 
-    function renderMedia(list) {
-      const container = document.getElementById("media-container");
-      container.innerHTML = "";
+<!-- Player -->
+<div id="player" class="player">
+    <img id="player-thumb" class="player-thumbnail">
+    <h2 id="player-title"></h2>
+    <audio id="audio-player" controls></audio>
+    <video id="video-player" controls></video>
+</div>
 
-      if (!list || list.length === 0) {
-        const msg = document.createElement("div");
-        msg.textContent = "No media found";
-        msg.style.color = "#888";
-        msg.style.textAlign = "center";
-        container.appendChild(msg);
-        return;
-      }
-
-      list.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "card";
-
-        const title = document.createElement("h3");
-        title.textContent = item.title || item.file || item.src;
-        card.appendChild(title);
-
-        if (item.thumbnail) {
-          const img = document.createElement("img");
-          img.className = "thumbnail";
-          img.src = item.thumbnail;
-          card.appendChild(img);
-        }
-
-        const src = item.src || item.file;
-        if (!src) {
-          console.warn("Media item without src/file:", item);
-        } else if (item.type === "audio" || src.match(/\\.(mp3|wav)$/i)) {
-          const audio = document.createElement("audio");
-          audio.controls = true;
-          audio.src = src;
-          card.appendChild(audio);
-        } else if (item.type === "video" || src.match(/\\.(mp4|webm)$/i)) {
-          const video = document.createElement("video");
-          video.controls = true;
-          video.src = src;
-          if (item.thumbnail) {
-            video.poster = item.thumbnail;
-          }
-          card.appendChild(video);
-        } else {
-          // Fallback
-          const other = document.createElement("audio");
-          other.controls = true;
-          other.src = src;
-          card.appendChild(other);
-        }
-
-        container.appendChild(card);
-      });
-    }
-
-    document.getElementById("search").addEventListener("input", async function () {
-      const query = this.value.toLowerCase();
-      const mediaList = await loadMediaList();
-      const filtered = mediaList.filter(m => {
-        const name = (m.title || m.file || m.src || "").toLowerCase();
-        return name.includes(query);
-      });
-      renderMedia(filtered);
-    });
-
-    loadMediaList().then(list => {
-      renderMedia(list);
-    });
-  </script>
+<script src="script.js"></script>
 </body>
 </html>
