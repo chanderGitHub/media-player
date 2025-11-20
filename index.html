@@ -1,32 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Media Player</title>
-    <style>
-        body {
-            font-family: Arial;
-            padding: 20px;
-            background: #f3f3f3;
-        }
-        audio, video {
-            width: 100%;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced Media Player</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #eee;
+    }
+    header {
+      background: #1f1f1f;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #0fbcf9;
+    }
+    #search {
+      width: 90%;
+      margin: 20px auto;
+      display: block;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 1px solid #444;
+      background: #222;
+      color: #eee;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .card {
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
+      transition: 0.2s;
+    }
+    .card:hover { transform: scale(1.03); }
+    .card h3 { font-size: 1rem; margin-bottom: 10px; }
+    img.thumbnail {
+      width: 100%;
+      border-radius: 12px;
+    }
+    video, audio {
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
+  <header>Advanced Media Player (Plain JS)</header>
 
-<h2>Audio Player</h2>
-<audio controls>
-  <source src="songs/song1.mp3" type="audio/mp3">
-  Your browser does not support the audio element.
-</audio>
+  <input type="text" id="search" placeholder="Search media..." />
 
-<h2>Video Player</h2>
-<video controls>
-  <source src="videos/video1.mp4" type="video/mp4">
-  Your browser does not support the video element.
-</video>
+  <div class="container" id="media-container"></div>
 
+  <script>
+    // LOADS FROM media.json
+    async function loadMediaList() {
+      const response = await fetch('media/media.json');
+      return await response.json();
+    }
+
+    function renderMedia(list) {
+      const container = document.getElementById("media-container");
+      container.innerHTML = "";
+
+      list.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `<h3>${item.title}</h3>`;
+
+        if (item.thumbnail) {
+          card.innerHTML += `<img class="thumbnail" src="${item.thumbnail}" />`;
+        }
+
+        if (item.type === "audio") {
+          card.innerHTML += `<audio controls src="${item.src}"></audio>`;
+        } else if (item.type === "video") {
+          card.innerHTML += `<video controls poster="${item.thumbnail || ''}" src="${item.src}"></video>`;
+        }
+
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById("search").addEventListener("input", async function () {
+      const value = this.value.toLowerCase();
+      const mediaList = await loadMediaList();
+      const filtered = mediaList.filter(m => m.title.toLowerCase().includes(value));
+      renderMedia(filtered);
+    });
+
+    loadMediaList().then(renderMedia);
+  </script>
 </body>
 </html>
