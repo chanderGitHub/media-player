@@ -1,38 +1,95 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Media Player</title>
-<link rel="stylesheet" href="styles.css" />
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f7f7f7; }
-  h1 { text-align: center; }
-  #search { width: 100%; padding: 10px; margin: 15px 0; font-size: 16px; }
-  .media-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
-  .media-card { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; text-align: center; }
-  .media-card img.thumbnail { width: 100px; height: 100px; object-fit: contain; margin-bottom: 10px; }
-  #player { display: none; margin-top: 25px; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
-  #player img { width: 120px; height: 120px; object-fit: contain; }
-  audio, video { width: 100%; margin-top: 15px; }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Media Player — Advanced</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <header class="topbar">
+    <div class="brand">Media Player</div>
+    <div class="top-controls">
+      <button id="upload-btn" class="btn">Upload</button>
+      <button id="dark-toggle" class="btn">Dark</button>
+    </div>
+  </header>
 
-<h1>Media Player</h1>
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <input id="search" placeholder="Search title / description..." />
+      </div>
 
-<input type="text" id="search" placeholder="Search media..." />
+      <div class="sidebar-section">
+        <label>Filter:
+          <select id="filter-type">
+            <option value="all">All</option>
+            <option value="audio">Audio</option>
+            <option value="video">Video</option>
+          </select>
+        </label>
 
-<div id="media-container" class="media-grid"></div>
+        <label>Sort:
+          <select id="sort-by">
+            <option value="title">Title A→Z</option>
+            <option value="date">Date (new→old)</option>
+            <option value="type">Type</option>
+          </select>
+        </label>
+      </div>
 
-<!-- Player -->
-<div id="player" class="player">
-  <img id="player-thumb" class="player-thumbnail" />
-  <h2 id="player-title"></h2>
-  <audio id="audio-player" controls></audio>
-  <video id="video-player" controls></video>
-</div>
+      <div class="sidebar-section playlist-panel">
+        <div class="playlist-header">
+          <h3>Playlist</h3>
+          <button id="clear-playlist" class="small">Clear</button>
+        </div>
+        <div id="playlist" class="playlist"></div>
+      </div>
+    </aside>
 
-<script src="script.js"></script>
+    <section class="main-area">
+      <section class="grid-controls">
+        <div id="stats" class="stats">Loading…</div>
+      </section>
+
+      <section id="library" class="media-grid" aria-live="polite"></section>
+
+      <section id="player" class="player" aria-hidden="true">
+        <div class="now-playing">
+          <img id="player-thumb" class="player-thumb" alt="thumbnail" />
+          <div class="track-info">
+            <div id="player-title" class="track-title">—</div>
+            <div id="player-desc" class="track-desc"></div>
+            <div class="player-controls">
+              <button id="prev" class="btn">Prev</button>
+              <button id="play" class="btn">Play</button>
+              <button id="next" class="btn">Next</button>
+              <button id="shuffle" class="btn">Shuffle</button>
+              <button id="repeat" class="btn">Repeat</button>
+              <input id="volume" type="range" min="0" max="1" step="0.01" />
+            </div>
+            <div class="time-row"><span id="cur-time">0:00</span> <div class="progress-wrap"><div id="progress" class="progress"></div></div> <span id="dur-time">0:00</span></div>
+          </div>
+        </div>
+
+        <div class="media-elements">
+          <audio id="audio" crossorigin></audio>
+          <video id="video" crossorigin playsinline></video>
+        </div>
+
+        <canvas id="wave" width="600" height="80" class="waveform" aria-hidden="true"></canvas>
+
+        <div class="extra-controls">
+          <button id="toggle-lyrics" class="small">Lyrics</button>
+          <div id="lyrics" class="lyrics" hidden></div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">Built for GitHub Pages — media auto-sync via workflow</footer>
+
+  <script src="script.js" defer></script>
 </body>
 </html>
