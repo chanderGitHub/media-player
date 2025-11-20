@@ -1,53 +1,54 @@
-body {
-  background: #111;
-  color: #fff;
-  font-family: Arial;
-  text-align: center;
-  padding: 20px;
+:root{
+  --bg:#f6f7fb; --card:#fff; --muted:#666; --accent:#0f62fe; --text:#111;
 }
-
-#search {
-  width: 90%;
-  padding: 10px;
-  margin: 20px 0;
-  border-radius: 10px;
+[data-theme="dark"]{
+  --bg:#0b0c0e; --card:#101113; --muted:#9aa0a6; --accent:#0fbcf9; --text:#e6eef6;
 }
-
-.media-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 15px;
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;
 }
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--card);box-shadow:0 1px 0 rgba(0,0,0,0.04)}
+.brand{font-weight:700}
+.btn{background:transparent;border:1px solid rgba(0,0,0,0.08);padding:6px 10px;border-radius:6px;cursor:pointer}
+.btn.small{padding:4px 8px;font-size:12px}
+.layout{display:flex;gap:16px;padding:16px;flex:1}
+.sidebar{width:300px;min-width:220px;background:var(--card);padding:12px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06);height:calc(100vh - 120px);overflow:auto}
+.sidebar-section{margin-bottom:12px}
+#search{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd}
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.media-card{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 6px 14px rgba(0,0,0,0.04);cursor:pointer;display:flex;flex-direction:column;align-items:center;transition:transform .14s,box-shadow .14s}
+.media-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,0.08)}
+.thumbnail{width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:10px}
+.player{margin-top:18px;background:var(--card);padding:12px;border-radius:10px;box-shadow:0 6px 14px rgba(0,0,0,0.04)}
+.now-playing{display:flex;gap:12px;align-items:flex-start}
+.player-thumb{width:140px;height:140px;object-fit:cover;border-radius:8px}
+.track-info{flex:1}
+.track-title{font-weight:700;font-size:1.05rem}
+.track-desc{color:var(--muted);font-size:0.9rem;margin-bottom:8px}
+.player-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.progress-wrap{flex:1;height:8px;background:rgba(0,0,0,0.06);border-radius:6px;margin:0 8px;position:relative}
+.progress{height:8px;background:var(--accent);width:0;border-radius:6px}
+.time-row{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--muted)}
+.media-elements audio, .media-elements video{width:100%;display:none;margin-top:12px;border-radius:8px}
+.video-visible{display:block}
+.waveform{width:100%;height:80px;margin-top:12px;border-radius:6px;background:linear-gradient(90deg, rgba(0,0,0,0.02), rgba(0,0,0,0.04))}
+.playlist{display:flex;flex-direction:column;gap:8px}
+.pl-item{display:flex;justify-content:space-between;align-items:center;padding:8px;background:rgba(0,0,0,0.02);border-radius:6px}
+.pl-item .title{flex:1;margin-right:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-item .actions{display:flex;gap:6px}
+.small{font-size:12px;padding:6px;border-radius:6px}
+.stats{color:var(--muted);margin-bottom:12px}
 
-.media-card {
-  background: #222;
-  padding: 10px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.2s;
-}
+/* lyrics */
+.lyrics{margin-top:12px;padding:10px;background:rgba(0,0,0,0.02);border-radius:8px;white-space:pre-wrap;color:var(--muted)}
 
-.media-card:hover {
-  background: #333;
-}
-
-.thumbnail {
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.player {
-  margin-top: 30px;
-  padding: 20px;
-  background: #222;
-  border-radius: 15px;
-  display: none;
-}
-
-.player-thumbnail {
-  width: 200px;
-  margin-bottom: 10px;
-  border-radius: 10px;
+/* responsive */
+@media (max-width:960px){
+  .layout{flex-direction:column}
+  .sidebar{width:100%;height:auto;order:2}
+  .main-area{order:1}
+  .player-thumb{width:96px;height:96px}
+  .thumbnail{height:120px}
 }
