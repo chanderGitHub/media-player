@@ -1,0 +1,46 @@
+name: Generate media.json
+
+on:
+  push:
+    paths:
+      - "media/**"
+      - ".github/workflows/generate-media-json.yml"
+  workflow_dispatch:
+
+jobs:
+  build_media_json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate media.json
+        run: |
+          echo "[" > media.json
+          first=true
+          for file in $(ls media); do
+            if [ "$first" = true ]; then
+              first=false
+            else
+              echo "," >> media.json
+            fi
+            ext="${file##*.}"
+            if [[ "$ext" == "mp3" || "$ext" == "wav" ]]; then
+              type="audio"
+            elif [[ "$ext" == "mp4" || "$ext" == "webm" ]]; then
+              type="video"
+            else
+              continue
+            fi
+            echo "  {\"file\": \"$file\", \"type\": \"$type\"}" >> media.json
+          done
+          echo "]" >> media.json
+
+      - name: Commit media.json
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add media.json
+          git commit -m "Auto-update media.json" || echo "No changes to commit"
+          git push
