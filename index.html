@@ -72,8 +72,10 @@
   <script>
     async function loadMediaList() {
       try {
-        const res = await fetch('media.json');
-        if (!res.ok) throw new Error('media.json not found: ' + res.status);
+        const res = await fetch('media.json?v=' + Date.now());  // cache-busting
+        if (!res.ok) {
+          throw new Error('media.json not found or inaccessible: ' + res.status);
+        }
         const data = await res.json();
         return data;
       } catch (e) {
@@ -86,8 +88,12 @@
       const container = document.getElementById("media-container");
       container.innerHTML = "";
 
-      if (list.length === 0) {
-        container.innerHTML = "<div style='color: #888; text-align: center;'>No media found</div>";
+      if (!list || list.length === 0) {
+        const msg = document.createElement("div");
+        msg.textContent = "No media found";
+        msg.style.color = "#888";
+        msg.style.textAlign = "center";
+        container.appendChild(msg);
         return;
       }
 
@@ -106,23 +112,28 @@
           card.appendChild(img);
         }
 
-        if ((item.type === "audio" || item.file?.endsWith?.(".mp3")) || item.src?.endsWith?.(".mp3")) {
+        const src = item.src || item.file;
+        if (!src) {
+          console.warn("Media item without src/file:", item);
+        } else if (item.type === "audio" || src.match(/\\.(mp3|wav)$/i)) {
           const audio = document.createElement("audio");
           audio.controls = true;
-          audio.src = item.src || item.file;
+          audio.src = src;
           card.appendChild(audio);
-        } else if ((item.type === "video" || item.file?.endsWith?.(".mp4")) || item.src?.endsWith?.(".mp4")) {
+        } else if (item.type === "video" || src.match(/\\.(mp4|webm)$/i)) {
           const video = document.createElement("video");
           video.controls = true;
-          video.src = item.src || item.file;
-          if (item.thumbnail) video.poster = item.thumbnail;
+          video.src = src;
+          if (item.thumbnail) {
+            video.poster = item.thumbnail;
+          }
           card.appendChild(video);
         } else {
-          // fallback: try generic tag
-          const mediaEl = document.createElement("audio");
-          mediaEl.controls = true;
-          mediaEl.src = item.src || item.file;
-          card.appendChild(mediaEl);
+          // Fallback
+          const other = document.createElement("audio");
+          other.controls = true;
+          other.src = src;
+          card.appendChild(other);
         }
 
         container.appendChild(card);
@@ -130,16 +141,15 @@
     }
 
     document.getElementById("search").addEventListener("input", async function () {
-      const value = this.value.toLowerCase();
+      const query = this.value.toLowerCase();
       const mediaList = await loadMediaList();
       const filtered = mediaList.filter(m => {
-        const t = (m.title || m.file || m.src || "").toLowerCase();
-        return t.includes(value);
+        const name = (m.title || m.file || m.src || "").toLowerCase();
+        return name.includes(query);
       });
       renderMedia(filtered);
     });
 
-    // initial load
     loadMediaList().then(list => {
       renderMedia(list);
     });
