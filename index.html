@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Media Player</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f7f7f7; }
+  h1 { text-align: center; }
+  #search { width: 100%; padding: 10px; margin: 15px 0; font-size: 16px; }
+  .media-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+  .media-card { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; text-align: center; }
+  .media-card img.thumbnail { width: 100px; height: 100px; object-fit: contain; margin-bottom: 10px; }
+  #player { display: none; margin-top: 25px; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+  #player img { width: 120px; height: 120px; object-fit: contain; }
+  audio, video { width: 100%; margin-top: 15px; }
+</style>
 </head>
 <body>
 
 <h1>Media Player</h1>
 
-<input type="text" id="search" placeholder="Search media...">
+<input type="text" id="search" placeholder="Search media..." />
 
 <div id="media-container" class="media-grid"></div>
 
 <!-- Player -->
 <div id="player" class="player">
-    <img id="player-thumb" class="player-thumbnail">
-    <h2 id="player-title"></h2>
-    <audio id="audio-player" controls></audio>
-    <video id="video-player" controls></video>
+  <img id="player-thumb" class="player-thumbnail" />
+  <h2 id="player-title"></h2>
+  <audio id="audio-player" controls></audio>
+  <video id="video-player" controls></video>
 </div>
 
 <script src="script.js"></script>
