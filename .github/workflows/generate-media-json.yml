@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
 
       - name: Generate media.json
@@ -19,44 +19,37 @@ jobs:
           echo "[" > media.json
           first=true
           shopt -s nullglob
+
           for file in media/*; do
             filename=$(basename "$file")
             ext="${filename##*.}"
 
-            # Title = filename without extension (replace - and _ with space)
+            # Build title
             title=$(echo "${filename%.*}" | sed -E 's/[-_]+/ /g')
 
-            # Thumbnails
-            case "$ext" in
-              jpg|jpeg|png|gif|webp)
-                thumbnail="media/$filename"
-                ;;
-              mp4|m4a|mov|webm|avi)
-                thumbnail="https://img.icons8.com/?size=128&id=59833&format=png"
-                ;;
-              mp3|wav|ogg)
-                thumbnail="https://img.icons8.com/?size=128&id=59833&format=png"
-                ;;
-              *)
-                thumbnail="https://img.icons8.com/?size=128&id=59833&format=png"
-                ;;
-            esac
+            # Thumbnail rules
+            if [[ "$ext" =~ ^(jpg|jpeg|png|gif|webp)$ ]]; then
+              thumbnail="media/$filename"
+            else
+              thumbnail="https://img.icons8.com/?size=128&id=59833&format=png"
+            fi
 
-            # Add comma except for the first entry
+            # Avoid trailing commas — add comma only after the first item
             if [ "$first" = false ]; then
               echo "," >> media.json
             fi
             first=false
 
-            # Write JSON entry
             echo "  {\"file\": \"media/$filename\", \"type\": \"$ext\", \"title\": \"$title\", \"thumbnail\": \"$thumbnail\"}" >> media.json
+
           done
+
           echo "]" >> media.json
 
-      - name: Commit and push
+      - name: Commit changes
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add media.json
-          git commit -m "Auto-update media.json" || echo "No changes to commit"
+          git commit -m "Update media.json" || echo "No changes"
           git push
