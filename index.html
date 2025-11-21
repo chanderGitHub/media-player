@@ -1,95 +1,52 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Media Player — Advanced</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Player</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">Media Player</div>
-    <div class="top-controls">
-      <button id="upload-btn" class="btn">Upload</button>
-      <button id="dark-toggle" class="btn">Dark</button>
+
+<!-- Dark Mode Toggle -->
+<button id="theme-toggle">🌙 Dark Mode</button>
+
+<h1>Media Player</h1>
+
+<input type="text" id="search" placeholder="Search media...">
+
+<div id="media-container" class="media-grid"></div>
+
+<!-- Player -->
+<div id="player" class="player">
+
+    <!-- Mini Player Drag Handle -->
+    <div id="drag-handle">⠿</div>
+
+    <img id="player-thumb" class="player-thumbnail">
+
+    <h2 id="player-title"></h2>
+
+    <div id="controls-top">
+        <button id="shuffle-btn">🔀</button>
+        <button id="repeat-btn">🔁</button>
+        <a id="download-btn" download>⬇ Download</a>
     </div>
-  </header>
 
-  <main class="layout">
-    <aside class="sidebar">
-      <div class="sidebar-section">
-        <input id="search" placeholder="Search title / description..." />
-      </div>
+    <!-- Waveform -->
+    <canvas id="waveform"></canvas>
 
-      <div class="sidebar-section">
-        <label>Filter:
-          <select id="filter-type">
-            <option value="all">All</option>
-            <option value="audio">Audio</option>
-            <option value="video">Video</option>
-          </select>
-        </label>
+    <!-- Waveform Style Switch -->
+    <div id="wave-style">
+        <button data-style="bars">Bars</button>
+        <button data-style="line">Line</button>
+        <button data-style="glow">Glow Bars</button>
+    </div>
 
-        <label>Sort:
-          <select id="sort-by">
-            <option value="title">Title A→Z</option>
-            <option value="date">Date (new→old)</option>
-            <option value="type">Type</option>
-          </select>
-        </label>
-      </div>
+    <audio id="audio-player" controls></audio>
+    <video id="video-player" controls></video>
+</div>
 
-      <div class="sidebar-section playlist-panel">
-        <div class="playlist-header">
-          <h3>Playlist</h3>
-          <button id="clear-playlist" class="small">Clear</button>
-        </div>
-        <div id="playlist" class="playlist"></div>
-      </div>
-    </aside>
-
-    <section class="main-area">
-      <section class="grid-controls">
-        <div id="stats" class="stats">Loading…</div>
-      </section>
-
-      <section id="library" class="media-grid" aria-live="polite"></section>
-
-      <section id="player" class="player" aria-hidden="true">
-        <div class="now-playing">
-          <img id="player-thumb" class="player-thumb" alt="thumbnail" />
-          <div class="track-info">
-            <div id="player-title" class="track-title">—</div>
-            <div id="player-desc" class="track-desc"></div>
-            <div class="player-controls">
-              <button id="prev" class="btn">Prev</button>
-              <button id="play" class="btn">Play</button>
-              <button id="next" class="btn">Next</button>
-              <button id="shuffle" class="btn">Shuffle</button>
-              <button id="repeat" class="btn">Repeat</button>
-              <input id="volume" type="range" min="0" max="1" step="0.01" />
-            </div>
-            <div class="time-row"><span id="cur-time">0:00</span> <div class="progress-wrap"><div id="progress" class="progress"></div></div> <span id="dur-time">0:00</span></div>
-          </div>
-        </div>
-
-        <div class="media-elements">
-          <audio id="audio" crossorigin></audio>
-          <video id="video" crossorigin playsinline></video>
-        </div>
-
-        <canvas id="wave" width="600" height="80" class="waveform" aria-hidden="true"></canvas>
-
-        <div class="extra-controls">
-          <button id="toggle-lyrics" class="small">Lyrics</button>
-          <div id="lyrics" class="lyrics" hidden></div>
-        </div>
-      </section>
-    </section>
-  </main>
-
-  <footer class="footer">Built for GitHub Pages — media auto-sync via workflow</footer>
-
-  <script src="script.js" defer></script>
+<script src="script.js"></script>
 </body>
 </html>
