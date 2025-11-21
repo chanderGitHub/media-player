@@ -8,41 +8,28 @@
 </head>
 <body>
 
-<!-- Dark Mode Toggle -->
-<button id="theme-toggle">🌙 Dark Mode</button>
-
 <h1>Media Player</h1>
 
 <input type="text" id="search" placeholder="Search media...">
 
+<!-- Media Grid -->
 <div id="media-container" class="media-grid"></div>
 
-<!-- Player -->
-<div id="player" class="player">
-
-    <!-- Mini Player Drag Handle -->
-    <div id="drag-handle">⠿</div>
-
-    <img id="player-thumb" class="player-thumbnail">
-
-    <h2 id="player-title"></h2>
-
-    <div id="controls-top">
-        <button id="shuffle-btn">🔀</button>
-        <button id="repeat-btn">🔁</button>
-        <a id="download-btn" download>⬇ Download</a>
+<!-- Floating Player -->
+<div id="player" class="player hidden">
+    <div class="player-top">
+        <img id="player-thumb" class="player-thumbnail">
+        <div class="player-info">
+            <h3 id="player-title"></h3>
+            <p id="player-type"></p>
+        </div>
+        <button id="close-player" class="close-btn">✕</button>
     </div>
 
-    <!-- Waveform -->
-    <canvas id="waveform"></canvas>
+    <!-- Waveform Box -->
+    <div id="waveform" class="waveform"></div>
 
-    <!-- Waveform Style Switch -->
-    <div id="wave-style">
-        <button data-style="bars">Bars</button>
-        <button data-style="line">Line</button>
-        <button data-style="glow">Glow Bars</button>
-    </div>
-
+    <!-- Audio/Video players -->
     <audio id="audio-player" controls></audio>
     <video id="video-player" controls></video>
 </div>
