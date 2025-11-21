@@ -8,21 +8,78 @@ const playerThumb = document.getElementById("player-thumb");
 const playerTitle = document.getElementById("player-title");
 const playerType = document.getElementById("player-type");
 const closePlayer = document.getElementById("close-player");
-const waveformBox = document.getElementById("waveform");
+
+const canvas = document.getElementById("waveform");
+const ctx = canvas.getContext("2d");
 
 let mediaList = [];
-let waveformInterval;
+let animationId = null;
+let waveOffset = 0;
 
-/* LOAD media.json */
+/* Resize canvas */
+function resizeCanvas() {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+/* Glowing digital waveform */
+function startWaveform() {
+    cancelAnimationFrame(animationId);
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let width = canvas.width;
+        let height = canvas.height;
+        let center = height / 2;
+        let step = 6;
+
+        waveOffset += 0.04;
+
+        for (let x = 0; x < width; x += step) {
+
+            let barHeight =
+                Math.sin((x / 35) + waveOffset) * 28 +
+                Math.sin((x / 15) - waveOffset * 1.5) * 16 +
+                50;
+
+            ctx.fillStyle = glowGradient();
+            ctx.shadowBlur = 18;
+            ctx.shadowColor = "#00f5ff";
+
+            ctx.fillRect(x, center - barHeight / 2, 4, barHeight);
+        }
+
+        animationId = requestAnimationFrame(draw);
+    }
+
+    draw();
+}
+
+function stopWaveform() {
+    cancelAnimationFrame(animationId);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+/* Neon gradient */
+function glowGradient() {
+    let g = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    g.addColorStop(0, "#00eaff");
+    g.addColorStop(0.5, "#00ff95");
+    g.addColorStop(1, "#0084ff");
+    return g;
+}
+
+/* Load media.json */
 fetch("media.json")
   .then(res => res.json())
   .then(data => {
     mediaList = data;
     renderMedia(data);
-  })
-  .catch(err => console.error("media.json Load Error:", err));
+  });
 
-/* RENDER MEDIA GRID */
 function renderMedia(list) {
   container.innerHTML = "";
 
@@ -46,30 +103,6 @@ function renderMedia(list) {
   });
 }
 
-/* WAVEFORM (COLORFUL BARS) */
-function startWaveform() {
-  waveformBox.innerHTML = "";
-  clearInterval(waveformInterval);
-
-  for (let i = 0; i < 25; i++) {
-    const bar = document.createElement("div");
-    bar.className = "wave-bar";
-    waveformBox.appendChild(bar);
-  }
-
-  waveformInterval = setInterval(() => {
-    document.querySelectorAll(".wave-bar").forEach(bar => {
-      bar.style.height = (10 + Math.random() * 100) + "%";
-    });
-  }, 150);
-}
-
-function stopWaveform() {
-  clearInterval(waveformInterval);
-  waveformBox.innerHTML = "";
-}
-
-/* PLAY MEDIA */
 function playMedia(item) {
   player.classList.remove("hidden");
 
@@ -86,6 +119,10 @@ function playMedia(item) {
     audioPlayer.src = item.file;
     audioPlayer.style.display = "block";
     audioPlayer.play();
+
+    audioPlayer.onpause = stopWaveform;
+    audioPlayer.onplay = startWaveform;
+
     startWaveform();
   } else {
     videoPlayer.src = item.file;
@@ -94,29 +131,15 @@ function playMedia(item) {
   }
 }
 
-/* CLOSE PLAYER */
 closePlayer.onclick = () => {
-  stopWaveform();
   audioPlayer.pause();
   videoPlayer.pause();
+  stopWaveform();
   player.classList.add("hidden");
 };
 
-/* SEARCH */
+/* Search */
 searchBox.addEventListener("input", e => {
   const q = e.target.value.toLowerCase();
   renderMedia(mediaList.filter(x => x.title.toLowerCase().includes(q)));
-});
-
-/* KEYBOARD SHORTCUTS */
-document.addEventListener("keydown", e => {
-  if (e.code === "Space") {
-    e.preventDefault();
-    if (!player.classList.contains("hidden")) {
-      if (!audioPlayer.paused) audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
-      if (!videoPlayer.paused) videoPlayer.paused ? videoPlayer.play() : videoPlayer.pause();
-    }
-  }
-  if (e.code === "ArrowRight") audioPlayer.currentTime += 5;
-  if (e.code === "ArrowLeft") audioPlayer.currentTime -= 5;
 });
