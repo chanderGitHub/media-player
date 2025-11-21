@@ -1,4 +1,4 @@
-/* Base Reset */
+/* Reset */
 * {
     margin: 0;
     padding: 0;
@@ -9,7 +9,6 @@
 body {
     background: #f4f4f4;
     padding: 20px;
-    color: #222;
 }
 
 /* Heading */
@@ -18,46 +17,46 @@ h1 {
     margin-bottom: 20px;
 }
 
-/* Search Box */
+/* Search */
 #search {
     width: 100%;
     padding: 12px;
     font-size: 16px;
     margin-bottom: 20px;
-    border-radius: 8px;
-    border: 1px solid #aaa;
+    border-radius: 10px;
+    border: 1px solid #888;
 }
 
 /* Media Grid */
 .media-grid {
     display: grid;
-    gap: 16px;
+    gap: 18px;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
 .media-card {
-    background: white;
-    border-radius: 12px;
+    background: #fff;
+    border-radius: 14px;
     padding: 12px;
     text-align: center;
+    box-shadow: 0 3px 10px #0003;
     cursor: pointer;
-    transition: 0.2s ease;
-    box-shadow: 0 2px 6px #0002;
+    transition: 0.2s;
 }
 
 .media-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 4px 12px #0003;
+    box-shadow: 0 5px 16px #0004;
 }
 
 .media-card img {
     width: 100%;
     height: 140px;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
-/* FLOATING PLAYER */
+/* Floating Player */
 .player {
     position: fixed;
     bottom: 10px;
@@ -65,18 +64,15 @@ h1 {
     transform: translateX(-50%);
     width: 95%;
     max-width: 480px;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 5px 18px #0005;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 9999;
-    transition: all 0.3s ease;
+    background: #111;
+    color: #fff;
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 8px 28px #0008;
+    z-index: 999;
+    transition: 0.3s ease;
 }
 
-/* Hidden initially */
 .hidden {
     opacity: 0;
     pointer-events: none;
@@ -87,14 +83,14 @@ h1 {
     align-items: center;
 }
 
-/* Rotating thumbnail animation */
+/* Rotating thumbnail */
 .player-thumbnail {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    margin-right: 12px;
-    animation: spin 6s linear infinite;
-    border: 3px solid #ddd;
+    margin-right: 15px;
+    animation: spin 7s linear infinite;
+    border: 3px solid #444;
 }
 
 @keyframes spin {
@@ -105,51 +101,34 @@ h1 {
 .close-btn {
     margin-left: auto;
     padding: 6px 10px;
-    font-size: 18px;
-    background: #eee;
+    font-size: 22px;
+    background: #222;
     border: none;
     border-radius: 8px;
+    color: #fff;
     cursor: pointer;
 }
 
-.player-info h3 {
-    margin-bottom: 3px;
-    font-size: 18px;
-}
-
-/* AUDIO / VIDEO */
+/* Audio & Video */
 audio, video {
     width: 100%;
-    border-radius: 10px;
+    margin-top: 10px;
+    border-radius: 12px;
 }
 
-/* WAVEFORM */
-.waveform {
-    display: flex;
-    align-items: flex-end;
-    height: 60px;
-    margin: 10px 0;
-    gap: 3px;
-    overflow: hidden;
+/* Glowing waveform (Canvas) */
+#waveform {
+    width: 100%;
+    height: 90px;
+    border-radius: 14px;
+    margin: 12px 0;
+    background: #000;
+    box-shadow: 0 0 20px #00eaff;
 }
 
-.wave-bar {
-    flex: 1;
-    background: linear-gradient(180deg, #ff0080, #ffbf00);
-    border-radius: 4px;
-    animation: wave 1s ease infinite alternate;
-}
-
-@keyframes wave {
-    from { height: 10%; }
-    to { height: 100%; }
-}
-
-/* MOBILE FIX — prevent large fullscreen */
+/* Mobile */
 @media (max-width: 600px) {
     .player {
-        bottom: 5px;
-        width: 96%;
         max-width: 380px;
         padding: 12px;
     }
@@ -157,9 +136,5 @@ audio, video {
     .player-thumbnail {
         width: 55px;
         height: 55px;
-    }
-
-    h3 {
-        font-size: 16px;
     }
 }
