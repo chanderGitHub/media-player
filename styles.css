@@ -1,137 +1,165 @@
-body {
-    font-family: Arial, sans-serif;
-    background: #f2f2f2;
-    color: #000;
+/* Base Reset */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f4f4f4;
     padding: 20px;
-    transition: 0.3s;
+    color: #222;
 }
 
-body.dark {
-    background: #111;
-    color: #fff;
+/* Heading */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-#theme-toggle {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    padding: 7px 15px;
+/* Search Box */
+#search {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-bottom: 20px;
     border-radius: 8px;
-    border: none;
-    background: #444;
-    color: white;
-    cursor: pointer;
+    border: 1px solid #aaa;
 }
 
+/* Media Grid */
 .media-grid {
     display: grid;
-    gap: 15px;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
 .media-card {
     background: white;
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 12px;
     text-align: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     cursor: pointer;
-    transition: 0.2s;
-}
-
-body.dark .media-card {
-    background: #222;
+    transition: 0.2s ease;
+    box-shadow: 0 2px 6px #0002;
 }
 
 .media-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px #0003;
 }
 
-.thumbnail {
+.media-card img {
     width: 100%;
-    height: 130px;
+    height: 140px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
-/* Main Player Box */
+/* FLOATING PLAYER */
 .player {
-    display: none;
     position: fixed;
     bottom: 10px;
-    left: 10px;
-    width: 360px;
-    background: white;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
-    border-radius: 12px;
-    padding: 20px;
-    z-index: 999;
-    transition: 0.3s;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    max-width: 480px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 5px 18px #0005;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+    transition: all 0.3s ease;
 }
 
-body.dark .player {
-    background: #222;
+/* Hidden initially */
+.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
-/* Mini Player Drag Handle */
-#drag-handle {
-    font-size: 22px;
-    cursor: grab;
-    text-align: center;
-    opacity: 0.6;
+.player-top {
+    display: flex;
+    align-items: center;
 }
 
-/* Rotating Thumbnail */
+/* Rotating thumbnail animation */
 .player-thumbnail {
-    width: 180px;
-    height: 180px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
-    margin: 0 auto;
-    display: block;
-    animation: rotate 8s linear infinite;
+    margin-right: 12px;
+    animation: spin 6s linear infinite;
+    border: 3px solid #ddd;
 }
 
-@keyframes rotate {
-    from { transform: rotate(0); }
+@keyframes spin {
+    from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
 
-/* Waveform */
-#waveform {
+.close-btn {
+    margin-left: auto;
+    padding: 6px 10px;
+    font-size: 18px;
+    background: #eee;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.player-info h3 {
+    margin-bottom: 3px;
+    font-size: 18px;
+}
+
+/* AUDIO / VIDEO */
+audio, video {
     width: 100%;
-    height: 200px;
-    background: #000;
     border-radius: 10px;
-    margin-top: 15px;
 }
 
-#controls-top {
+/* WAVEFORM */
+.waveform {
     display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin: 10px;
-}
-
-#controls-top button, #download-btn {
-    padding: 8px 12px;
-    border-radius: 6px;
-    background: #333;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-#wave-style {
+    align-items: flex-end;
+    height: 60px;
     margin: 10px 0;
-    text-align: center;
+    gap: 3px;
+    overflow: hidden;
 }
 
-#wave-style button {
-    padding: 5px 12px;
-    margin: 3px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
+.wave-bar {
+    flex: 1;
+    background: linear-gradient(180deg, #ff0080, #ffbf00);
+    border-radius: 4px;
+    animation: wave 1s ease infinite alternate;
+}
+
+@keyframes wave {
+    from { height: 10%; }
+    to { height: 100%; }
+}
+
+/* MOBILE FIX — prevent large fullscreen */
+@media (max-width: 600px) {
+    .player {
+        bottom: 5px;
+        width: 96%;
+        max-width: 380px;
+        padding: 12px;
+    }
+
+    .player-thumbnail {
+        width: 55px;
+        height: 55px;
+    }
+
+    h3 {
+        font-size: 16px;
+    }
 }
